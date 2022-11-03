@@ -33,12 +33,9 @@ public class Main {
             System.out.println("Чтение файла " + file.getName());
             lineByRegex(FileUtils.readLines(file, "UTF-8"), matcher);
         } else if (file.isDirectory()) {
-            Collection<File> files;
-            if (cmd.hasOption("rp")) {
-                files = FileUtils.listFiles(file, new WildcardFileFilter(cmd.getOptionValue("rp")), TrueFileFilter.INSTANCE);
-            } else {
-                files = FileUtils.listFiles(file, new SuffixFileFilter("txt"), TrueFileFilter.INSTANCE);
-            }
+            Collection<File> files = cmd.hasOption("rp") ?
+                FileUtils.listFiles(file, new WildcardFileFilter(cmd.getOptionValue("rp")), TrueFileFilter.INSTANCE) :
+                FileUtils.listFiles(file, new SuffixFileFilter("txt"), TrueFileFilter.INSTANCE);
             int progress = 0;
             int all = files.size();
             for (var t : files) {
