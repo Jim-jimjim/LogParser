@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,6 +20,7 @@ public class Main {
         Options options = new Options();
         options.addRequiredOption("p", "path", true, "Path to file/folder");
         options.addRequiredOption("r", "regex", true, "Regex for search");
+        options.addOption("rp", "regexp", true, "Regex for filename");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -31,7 +33,12 @@ public class Main {
             System.out.println("Чтение файла " + file.getName());
             lineByRegex(FileUtils.readLines(file, "UTF-8"), matcher);
         } else if (file.isDirectory()) {
-            Collection<File> files = FileUtils.listFiles(file, new SuffixFileFilter("txt"), TrueFileFilter.INSTANCE);
+            Collection<File> files;
+            if (cmd.hasOption("rp")) {
+                files = FileUtils.listFiles(file, new WildcardFileFilter(cmd.getOptionValue("rp")), TrueFileFilter.INSTANCE);
+            } else {
+                files = FileUtils.listFiles(file, new SuffixFileFilter("txt"), TrueFileFilter.INSTANCE);
+            }
             int progress = 0;
             int all = files.size();
             for (var t : files) {
