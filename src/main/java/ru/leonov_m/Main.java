@@ -5,7 +5,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -26,21 +28,32 @@ public class Main {
         Matcher matcher = pattern.matcher("");
 
         if (file.isFile()) {
+            System.out.println("Чтение файла " + file.getName());
             lineByRegex(FileUtils.readLines(file, "UTF-8"), matcher);
         } else if (file.isDirectory()) {
             Collection<File> files = FileUtils.listFiles(file, new SuffixFileFilter("txt"), TrueFileFilter.INSTANCE);
+            int progress = 0;
+            int all = files.size();
             for (var t : files) {
+                progress++;
+                System.out.println("Чтение файла " + progress + " из " + all);
                 lineByRegex(FileUtils.readLines(t, "UTF-8"), matcher);
             }
         }
     }
 
-    private static void lineByRegex(List<String> lines, Matcher matcher) {
+    private static void lineByRegex(List<String> lines, Matcher matcher) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
+        int progress = 0;
+        int all = lines.size();
         for (var line : lines) {
+            progress++;
+            System.out.println("Чтение строки " + progress + " из " + all);
             matcher.reset(line);
             if (matcher.find()) {
-                System.out.println(line);
+                writer.write(line + "\n");
             }
         }
+        System.out.println("Файл прочитан");
     }
 }
