@@ -47,7 +47,8 @@ public class Main {
     }
 
     private static void lineByRegex(List<String> lines, Matcher matcher) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt", true));
+        writer.write(System.lineSeparator());
         int progress = 0;
         int all = lines.size();
         for (var line : lines) {
@@ -55,7 +56,7 @@ public class Main {
             System.out.println("Чтение строки " + progress + " из " + all);
             matcher.reset(line);
             if (matcher.find()) {
-                writer.write(line + "\n");
+                writer.write(line + System.lineSeparator());
             }
         }
         System.out.println("Файл прочитан");
